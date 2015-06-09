@@ -1,3 +1,4 @@
+require "sidekiq"
 require "sidekiq/workflow/version"
 
 module Sidekiq
