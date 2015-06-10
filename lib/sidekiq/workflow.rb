@@ -1,5 +1,7 @@
 require "sidekiq"
 require "sidekiq/workflow/version"
+require "sidekiq/workflow/client_middleware"
+require "sidekiq/workflow/server_middleware"
 
 module Sidekiq
   module Workflow
