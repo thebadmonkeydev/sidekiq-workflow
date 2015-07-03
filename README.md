@@ -1,4 +1,7 @@
 # Sidekiq::Workflow
+_sidekiq-workflow is currently in development and is not yet suited to
+production use.  Please continue at your own risk...you have been warned
+and will be PUNISHED!_
 
 ## Installation
 
@@ -18,33 +21,18 @@ Or install it yourself as:
 
 ## Usage
 
-_WORK IN PROGRESS_
-
-### Representing a Workflow
-
-`sidekiq-workflow` provides a simple API for executing workflows:
+To run a workflow, sidekiq-workflow provides a simple interface:
 
 ```
-Sidekiq::Workflow.run(workflow_definition)
+Sidekiq::Workflow.run(sequence_definition)
 ```
 
-A workflow definition is composed of an array-defined workflow.  The
+A sequence definition is composed of an array-defined workflow.  The
 convention here is that jobs within the root array element are executed
-sequentially, one level deeper is executed in parallel, one level deeper
-than that is again sequential.  The mode of operation switches with each
-level.  In the examples and diagrams below, I've labeled the opening
-parentheses with an `s` or a `p` to indicate whether that array is being
-executed sequentially or in parallel.
+sequentially, one level deeper is executed in parallel.  Currently,
+sidekiq-workflow only supports simple embedded parallelism at one level.
+This means that it only supports workflows like the following:
 
-```ruby
-[(s)
-  worker_1,
-  [(p)worker_2, worker_3],
-  worker_4
-]
-```
-
-For this workflow
 ```
          worker_2
         /        \
@@ -52,20 +40,43 @@ worker_1          worker_4
         \        /
          worker_3
 ```
-
-Another Example
-```
-[(s)
+A workflow like this is easily defined with the following structure:
+```ruby
+[
   worker_1,
-  [(p)
-    [(s)worker_2, worker_3],
-    [(s)worker_4, [(p)worker_5, worker_6]]
-  ],
-  worker_7
+  [worker_2, worker_3],
+  worker_4
+]
+```
+workers in the root array are processed sequentially and any workers in nested
+arrays are processes in parrallel.  The `worker_#` values above can be a
+strings or worker class names so:
+
+```ruby
+[
+  "AccountWorker",
+  ["UserWorker", "ProfileWorker"],
+  "EmailWorker"
 ]
 ```
 
-For this workflow
+is equivalent to
+
+```ruby
+[
+  AccountWorker,
+  [UserWorker, ProfileWorker],
+  EmailWorker
+]
+```
+
+## Coming Soon
+
+Parameter passing and custom worker methods will be coming shortly as
+well as expanded workflow structure providing for any mixture of
+sequential and parallel definitions to make workflows like this
+possible:
+
 ```
                   worker_5
                  /        \
@@ -75,30 +86,6 @@ worker_1          worker_6   /
         \                   /
          worker_2---worker_3
 
-```
-Passing parameters is also fairly simple in this first iteration.  If
-you'd like to pass parameters to a worker simply enclose that particular
-worker within a hash like the following:
-
-```ruby
-[
-  { worker: worker_1, params: [a, b, c] },
-  ...
-]
-```
-
-```
-#  internal workflow structure
-
-{
-  node_id:       'abcdefg12345',
-  name:          'AccountLaunchWorker',
-  description:   'creating account on Facebook',
-  worker_params: [x, y, z],
-  queued_ids:    '123421324' # This comes from Sidekiq when a worker's perform_async method is called
-  complete_ids:  ['123421324', '12324231543'],
-  next_nodes:    ['abcdefg13579', 'zyxwvut987654']
-}
 ```
 
 ## Development
@@ -111,7 +98,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sidekiq-workflow. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/michaelkelly322/sidekiq-workflow. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 Please also take a look at [this post](https://badmonkeydev.wordpress.com/2015/05/23/code-review-best-practices/) for guidlines on submitting pull requests.  Thanks!
 
