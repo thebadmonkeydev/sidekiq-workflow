@@ -107,3 +107,7 @@ Please also take a look at [this post](https://badmonkeydev.wordpress.com/2015/0
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/michaelkelly322/sidekiq-workflow/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
