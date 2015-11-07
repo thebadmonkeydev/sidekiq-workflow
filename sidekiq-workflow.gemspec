@@ -26,6 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry"
 
   spec.add_runtime_dependency "sidekiq", "~> 3.3"
-  spec.add_runtime_dependency "dm-redis-adapter"
   spec.add_runtime_dependency "dm-types"
 end
