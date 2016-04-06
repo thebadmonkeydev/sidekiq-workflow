@@ -1,7 +1,4 @@
 # Sidekiq::Workflow
-_sidekiq-workflow is currently in development and is not yet suited to
-production use.  Please continue at your own risk...you have been warned
-and will be PUNISHED!_
 
 ## Installation
 
